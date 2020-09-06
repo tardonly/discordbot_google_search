@@ -2,6 +2,7 @@ import os
 
 import discord, requests
 
+from db import get_history_keyword, store_search_history
 
 client = discord.Client()
 
@@ -22,23 +23,28 @@ async def on_member_join(member):
 @client.event
 async def on_message(message):
 	print(message.author, client.user)
+	print(dir(message))
 	# if message.author == client.user:
 	# 	return
 	
 	if message.content == 'hi':
 		await message.channel.send("hey")
-	elif message.content.startswith('google_search_key:'):
-		key = message.content.replace('google_search_key:', '')
+	if message.content.startswith('!recent '):
+		search_recent_word_key = message.content.replace('!recent ', '')
+		get_history_keyword(search_recent_word_key,message.author)
+		
+	elif message.content.startswith('!google_search_key '):
+		key = message.content.replace('!google_search_key ', '')
 		os.environ['{}_google_key'.format(message.channel)] = key
 		await message.delete()
 		await message.channel.send("Your key is set for this channel!")
 
-	elif message.content.startswith('google:') or message.content.startswith('Google:') or message.content.startswith(
-			'GOOGLE:'):
+	elif message.content.startswith('!google ') or message.content.startswith('!Google ') or message.content.startswith(
+			'!GOOGLE '):
 		if not os.getenv('{}_google_key'.format(message.channel)):
-			await message.channel.send("Your search key is not set, please send key starts with `google_search_key:`")
+			await message.channel.send("Your search key is not set, please send key starts with `!google_search_key `")
 		else:
-			search_query = message.content.replace('google:', '').replace('Google:', '').replace('GOOGLE:', '').strip()
+			search_query = message.content.replace('!google ', '').replace('!Google ', '').replace('!GOOGLE ', '').strip()
 			key = os.getenv('{}_google_key'.format(message.channel))
 			print('key', key)
 			cx = '67cb10efe48ca0fa2'
@@ -55,6 +61,7 @@ async def on_message(message):
 					await message.channel.send('Your search results are following:')
 					for embed in embed_list:
 						await message.channel.send(embed = embed)
+					store_search_history(search_query, message.author)
 			
 			else:
 				await message.channel.send('No item found')
