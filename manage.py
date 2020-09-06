@@ -5,7 +5,7 @@ import sys
 
 from bot import client
 
-TOKEN = 'NzUxNzc5MjEyMDM3NDU1OTAz.X1OC8w.GxLV155BNLSwCDmLZ1dtkHpIDSc'  # os.getenv('DISCORD_TOKEN')
+TOKEN = os.getenv('DISCORD_TOKEN')
 
 def main():
     """Run administrative tasks."""
