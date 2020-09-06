@@ -15,3 +15,5 @@ sqlparse==0.3.1
 urllib3==1.25.10
 yarl==1.5.1
 whitenoise
+pymongo
+dnspython

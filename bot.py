@@ -10,6 +10,7 @@ client = discord.Client()
 @client.event
 async def on_ready():
 	print(f'{client.user} has connected to Discord!')
+	return True
 
 
 @client.event
@@ -18,20 +19,23 @@ async def on_member_join(member):
 	await member.dm_channel.send(
 		f'Hi {member.name}, welcome to my {member.dm_channel} server!'
 	)
+	return True
 
 
 @client.event
 async def on_message(message):
-	print(message.author, client.user)
-	print(dir(message))
-	# if message.author == client.user:
-	# 	return
-	
+	if message.author == client.user:
+		return
 	if message.content == 'hi':
 		await message.channel.send("hey")
 	if message.content.startswith('!recent '):
 		search_recent_word_key = message.content.replace('!recent ', '')
-		get_history_keyword(search_recent_word_key,message.author)
+		msg =get_history_keyword(search_recent_word_key,message.author)
+		print(msg)
+		if msg:
+			await message.channel.send(msg,delete_after=10)
+		else:
+			await message.channel.send("No words searched by you like `{}`!".format(search_recent_word_key),delete_after=2)
 		
 	elif message.content.startswith('!google_search_key '):
 		key = message.content.replace('!google_search_key ', '')
@@ -57,7 +61,7 @@ async def on_message(message):
 				else:
 					embed_list = [
 						discord.Embed(title = item.get('title'), url = item.get('link'), description = item.get('snippet'))
-						for item in items[:4]]
+						for item in items[:5]]
 					await message.channel.send('Your search results are following:')
 					for embed in embed_list:
 						await message.channel.send(embed = embed)
@@ -65,3 +69,4 @@ async def on_message(message):
 			
 			else:
 				await message.channel.send('No item found')
+	return True
