@@ -31,7 +31,6 @@ async def on_message(message):
 	if message.content.startswith('!recent '):
 		search_recent_word_key = message.content.replace('!recent ', '')
 		msg =get_history_keyword(search_recent_word_key,message.author)
-		print(msg)
 		if msg:
 			await message.channel.send(msg,delete_after=10)
 		else:
@@ -50,7 +49,6 @@ async def on_message(message):
 		else:
 			search_query = message.content.replace('!google ', '').replace('!Google ', '').replace('!GOOGLE ', '').strip()
 			key = os.getenv('{}_google_key'.format(message.channel))
-			print('key', key)
 			cx = '67cb10efe48ca0fa2'
 			result = requests.get(
 				"https://www.googleapis.com/customsearch/v1?key={}&q={}&cx={}".format(key, search_query, cx))
