@@ -1,10 +1,11 @@
-import pymongo
-dbuser='ram'
-dbpassword='ramu4321'
+import os
 
-db_name='ram'
+import pymongo
+dbuser=os.getenv('DB_USER')
+dbpassword=os.getenv('DB_PASSWORD')
+db_name=os.getenv('DB_name')
 db_url="mongodb+srv://{}:{}@cluster0.rgmj5.gcp.mongodb.net/?retryWrites=true&w=majority".format(dbuser,dbpassword)
-db = pymongo.MongoClient(db_url).ram
+db = pymongo.MongoClient(db_url)[db_name]
 
 def store_search_history(search_query, author):
 	db.history.insert_one({'keyword':search_query, "user":author.name})
